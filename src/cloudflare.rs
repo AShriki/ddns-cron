@@ -32,9 +32,18 @@ pub(crate) fn cloudflare_update_dns(siteinfo: &Value) -> u8{
     let get_response_json: Value = serde_json::from_str(&get_response_json_string).expect("Unable to parse json file");
     let dns_ip_resolve = get_response_json["result"]["content"].to_string();
     let ip: String = match body_vars["type"].as_str().unwrap() {
-        "A"=>{client_builder.get("https://api4.ipify.org").send().unwrap().text().unwrap()},
-        "AAAA"=>{client_builder.get("https://api64.ipify.org").send().unwrap().text().unwrap()}
-        _=>{panic!("Bad record type in json file for {}",body_vars["name"].as_str().unwrap())}
+        "A"=>{
+            let resp: Value = client_builder.get("https://api4.ipify.org?format=json").send().unwrap().json().expect("Unable to unwrap ipify v4 response");
+            resp["ip"].to_string()
+        },
+        "AAAA"=>{
+            let resp: Value = client_builder.get("https://api64.ipify.org?format=json").send().unwrap().json().expect("Unable to unwrap ipify v6 response");
+            resp["ip"].to_string()
+        }
+        _=>{
+            println!("Bad record type in json file for {}",body_vars["name"].as_str().unwrap());
+            return 2;
+        }
     };
     println!("From web: {}\nFrom Cloudflare DNS: {}",ip, dns_ip_resolve);
     if ip != dns_ip_resolve {

@@ -14,3 +14,4 @@ Cargo.lock
 *.pdb
 !example.json
 *.json
+config/

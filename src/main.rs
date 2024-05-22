@@ -8,7 +8,15 @@ mod cloudflare;
 use cloudflare::cloudflare_update_dns;
 
 fn main() {
-    for filepath in glob("*.json").expect("Failed to read glob pattern") {
+    let mut config_path = match std::env::args().nth(1) {
+        Some(path) => path,
+        None => {
+            println!("No path to config files specified");
+            exit(3);
+        },
+    };
+    config_path.push_str("/*.json");
+    for filepath in glob(config_path.as_str()).expect("Failed to read glob pattern") {
         let path = match filepath {
             Ok(path) => path,
             Err(_) => exit(1),
