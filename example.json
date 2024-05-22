@@ -1,0 +1,21 @@
+{
+    "sites": 
+    [
+        {
+            "provider": "cloudflare",
+            "url": "https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{dns_record_id}",
+            "header":{
+                "content-type": "application/json",
+                "X-Auth-Email": "username@example.com",
+                "X-Auth-key": "api key here"
+            },
+            "body":{
+                "name": "example.com",
+                "proxied": false,
+                "type": "AAAA",
+                "comment": "ddns-cron",
+                "ttl": 1
+            }
+        }
+    ]
+}
